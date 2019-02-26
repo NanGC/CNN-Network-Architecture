@@ -54,7 +54,7 @@ def inference(images):
     # print(np.shape(h_pool4))
     h_pool4_flat = tf.reshape(h_pool4, [-1, 7 * 7 * 16])
 
-    # 5\6\7全连接层
+    # 5、6、7全连接层
     with tf.variable_scope('fc5'):
         W_fc5 = weight_variable([7 * 7 * 16, 120])
         b_fc5 = bias_variable([120])
