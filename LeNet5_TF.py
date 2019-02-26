@@ -1,3 +1,86 @@
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+# -*- coding: utf-8 -*-
+
+from tensorflow.examples.tutorials.mnist import input_data
+import tensorflow as tf
+import numpy as np
+import sys
+import os
+
+mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
+logs_train_dir = './Model'
+
+def weight_variable(shape):
+    # 产生正态分布，标准差为0.1
+    initial = tf.truncated_normal(shape, stddev=0.1)
+    return tf.Variable(initial)
+
+
+def bias_variable(shape):
+    # 创建一个结构为shape矩阵也可以说是数组shape声明其行列，初始化所有值为0.1
+    initial = tf.constant(0.1, shape=shape)
+    return tf.Variable(initial)
+
+
+def conv2d(x,W):
+    return tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding='SAME')
+
+
+def max_pool_2x2(x):
+    return tf.nn.max_pool(x, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+
+
+def inference(images):
+    # 第1层卷积
+    with tf.variable_scope('conv1'):
+        W_conv1 = tf.Variable(weight_variable([5, 5, 1, 6]), name="weight")
+        b_conv1 = tf.Variable(bias_variable([6]), name="bias")
+        h_conv1 = tf.nn.relu(conv2d(images, W_conv1) + b_conv1)
+    # print(np.shape(h_conv1))
+    # 第2层池化
+    with tf.variable_scope('pool2'):
+        h_pool2 = max_pool_2x2(h_conv1)
+    # print(np.shape(h_pool2))
+
+    # 第3层卷积
+    with tf.variable_scope('conv3'):
+        W_conv3 = tf.Variable(weight_variable([5, 5, 6, 16]), name="weight")
+        b_conv3 = tf.Variable(bias_variable([16]), name="bias")
+        h_conv3 = tf.nn.relu(conv2d(h_pool2, W_conv3) + b_conv3)
+    # print(np.shape(h_conv3))
+    # 第4层池化
+    with tf.variable_scope('pool4'):
+        h_pool4 = max_pool_2x2(h_conv3)
+    # print(np.shape(h_pool4))
+    h_pool4_flat = tf.reshape(h_pool4, [-1, 7 * 7 * 16])
+
+    # 5、6、7全连接层
+    with tf.variable_scope('fc5'):
+        W_fc5 = weight_variable([7 * 7 * 16, 120])
+        b_fc5 = bias_variable([120])
+        h_fc5 = tf.nn.relu(tf.matmul(h_pool4_flat, W_fc5) + b_fc5)
+
+    with tf.variable_scope('fc6'):
+        W_fc6 = weight_variable([120, 84])
+        b_fc6 = bias_variable([84])
+        h_fc6 = tf.nn.relu(tf.matmul(h_fc5, W_fc6) + b_fc6)
+
+    with tf.variable_scope('out'):
+        W_out = weight_variable([84, 10])
+        b_out = bias_variable([10])
+        h_out = tf.nn.softmax(tf.matmul(h_fc6, W_out) + b_out)
+
+    # h_out_drop = tf.nn.dropout(h_out, 0.5)
+    return h_out
+
+x = tf.placeholder(tf.float32, [None, 28*28])
+y_ = tf.placeholder(tf.float32, [None, 10])
+x_image = tf.reshape(x, [-1, 28, 28, 1])
+
+y_conv = inference(x_image)
+>>>>>>> c2bda30... LeNet5_TF
 
 # -*- coding: utf-8 -*-
 
